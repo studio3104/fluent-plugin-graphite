@@ -49,6 +49,8 @@ class Fluent::GraphiteOutput < Fluent::Output
       emit_tag = tag.dup
       filter_record(emit_tag, time, record)
       next unless metrics = format_metrics(emit_tag, record)
+
+      # implemented to immediate call post method in this loop, because graphite-api.gem has the buffers.
       post(metrics, time)
     end
 
@@ -69,7 +71,7 @@ class Fluent::GraphiteOutput < Fluent::Output
       key = case @tag_for
             when 'ignore' then k
             when 'prefix' then tag + k
-            when 'suffix' then k + '.' + tag.sub(/\.$/, '')
+            when 'suffix' then k + '.' + tag.sub(/\.$/, '') # include a dot at the end of the emit_tag fluent-mixin-rewrite-tag-name returns. remove it.
             end
 
       metrics[key.gsub(/\s+/, '_')] = v.to_f
