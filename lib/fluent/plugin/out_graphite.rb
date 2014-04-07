@@ -31,7 +31,7 @@ class Fluent::GraphiteOutput < Fluent::Output
       raise Fluent::ConfigError, 'out_graphite: missing remove_tag_prefix, remove_tag_suffix, add_tag_prefix or add_tag_suffix'
     end
 
-    if @tag_for_key_prefix && @tag_for_key_suffix
+    if !@tag_for_key_prefix && !@tag_for_key_suffix
       raise Fluent::ConfigError, 'out_graphite: missing both of tag_for_key_prefix and tag_for_key_suffix'
     end
     if @tag_for_key_prefix && @tag_for_key_suffix
