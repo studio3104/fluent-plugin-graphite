@@ -74,7 +74,8 @@ class Fluent::GraphiteOutput < Fluent::Output
             when 'suffix' then k + '.' + tag.sub(/\.$/, '') # include a dot at the end of the emit_tag fluent-mixin-rewrite-tag-name returns. remove it.
             end
 
-      metrics[key.gsub(/\s+/, '_')] = v.to_f
+      key = key.gsub(/(\s|\/)+/, '_') # cope with in the case of containing symbols or spaces in the key of the record like in_dstat.
+      metrics[key] = v.to_f
     end
     metrics
   end
