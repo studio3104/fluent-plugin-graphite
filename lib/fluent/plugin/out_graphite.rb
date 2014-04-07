@@ -67,9 +67,9 @@ class Fluent::GraphiteOutput < Fluent::Output
     metrics = {}
     filtered_record.each do |k, v|
       key = case @tag_for
-            when 'ignore'; then k
-            when 'prefix'; then tag + k
-            when 'suffix'; then k + '.' + tag.sub(/\.$/, '')
+            when 'ignore' then k
+            when 'prefix' then tag + k
+            when 'suffix' then k + '.' + tag.sub(/\.$/, '')
             end
 
       metrics[key.gsub(/\s+/, '_')] = v.to_f
