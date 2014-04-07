@@ -5,7 +5,6 @@ class Fluent::GraphiteOutput < Fluent::Output
 
   include Fluent::HandleTagNameMixin
   include Fluent::Mixin::RewriteTagName
-  config_param :hostname_command, :string, default: 'hostname'
 
   config_param :host, :string
   config_param :port, :integer, default: 2003
