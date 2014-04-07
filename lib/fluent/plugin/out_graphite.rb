@@ -86,5 +86,7 @@ class Fluent::GraphiteOutput < Fluent::Output
 
   def post(message)
     TCPSocket.open(@host, @port) { |s| s.write(message) }
+  rescue Errno::ECONNREFUSED
+    $log.warn "out_graphite: connection refused by #{@host}:#{@port}"
   end
 end
