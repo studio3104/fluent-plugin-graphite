@@ -1,4 +1,4 @@
-# Fluent::Plugin::Graphite
+# Fluent::Plugin::Graphite [![Build Status](https://travis-ci.org/studio3104/fluent-plugin-graphite.png)](https://travis-ci.org/studio3104/fluent-plugin-graphite)
 
 TODO: Write a gem description
 
