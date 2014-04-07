@@ -8,8 +8,7 @@ class Fluent::GraphiteOutput < Fluent::Output
 
   config_param :host, :string
   config_param :port, :integer, default: 2003
-  config_param :tag_for_key_prefix, :bool, default: false
-  config_param :tag_for_key_suffix, :bool, default: false
+  config_param :tag_for, :string, default: 'prefix'
   config_param :name_keys, :string, default: nil
   config_param :name_key_pattern, :string, default: nil
 
@@ -26,15 +25,8 @@ class Fluent::GraphiteOutput < Fluent::Output
   def configure(conf)
     super
 
-    if !@tag && !@remove_tag_prefix && !@remove_tag_suffix && !@add_tag_prefix && !@add_tag_suffix
-      raise Fluent::ConfigError, 'out_graphite: missing remove_tag_prefix, remove_tag_suffix, add_tag_prefix or add_tag_suffix'
-    end
-
-    if !@tag_for_key_prefix && !@tag_for_key_suffix
-      raise Fluent::ConfigError, 'out_graphite: missing both of tag_for_key_prefix and tag_for_key_suffix'
-    end
-    if @tag_for_key_prefix && @tag_for_key_suffix
-      raise Fluent::ConfigError, 'out_graphite: cannot specify both of tag_for_key_prefix and tag_for_key_suffix'
+    if !['prefix', 'suffix', 'ignore'].include?(@tag_for)
+      raise Fluent::ConfigError, 'out_graphite: can specify to tag_for only prefix, suffix or ignore'
     end
 
     if !@name_keys && !@name_key_pattern
@@ -73,14 +65,13 @@ class Fluent::GraphiteOutput < Fluent::Output
     return nil if filtered_record.empty?
 
     metrics = {}
-    tag = tag.sub(/\.$/, '')
-
     filtered_record.each do |k, v|
-      key = if @tag_for_key_prefix
-              tag + '.' + k
-            else # defined @tag_for_key_suffix
-              k + '.' + tag
+      key = case @tag_for
+            when 'ignore'; then k
+            when 'prefix'; then tag + k
+            when 'suffix'; then k + '.' + tag.sub(/\.$/, '')
             end
+
       metrics[key.gsub(/\s+/, '_')] = v.to_f
     end
     metrics
