@@ -16,7 +16,12 @@ class Fluent::GraphiteOutput < Fluent::Output
 
   def initialize
     super
-    require 'socket'
+    require 'graphite-api'
+  end
+
+  def start
+    super
+    @client = GraphiteAPI.new(graphite: "#{@host}:#{@port}")
   end
 
   def configure(conf)
@@ -52,14 +57,14 @@ class Fluent::GraphiteOutput < Fluent::Output
     es.each do |time, record|
       emit_tag = tag.dup
       filter_record(emit_tag, time, record)
-      next unless message = create_message(emit_tag, time, record)
-      post(message)
+      next unless metrics = format_metrics(emit_tag, record)
+      post(metrics, time)
     end
 
     chain.next
   end
 
-  def create_message(tag, time, record)
+  def format_metrics(tag, record)
     filtered_record = if @name_keys
                         record.select { |k,v| @name_keys.include?(k) }
                       else # defined @name_key_pattern
@@ -68,7 +73,7 @@ class Fluent::GraphiteOutput < Fluent::Output
 
     return nil if filtered_record.empty?
 
-    message = ''
+    metrics = {}
     tag = tag.sub(/\.$/, '')
 
     filtered_record.each do |k, v|
@@ -77,15 +82,13 @@ class Fluent::GraphiteOutput < Fluent::Output
             else # defined @tag_for_key_suffix
               k + '.' + tag
             end
-      key = key.gsub(/\s+/, '_')
-      value = v.to_f
-      message = message + "#{key} #{value} #{time}\n"
+      metrics[key.gsub(/\s+/, '_')] = v.to_f
     end
-    message
+    metrics
   end
 
-  def post(message)
-    TCPSocket.open(@host, @port) { |s| s.write(message) }
+  def post(metrics, time)
+    @client.metrics(metrics, time)
   rescue Errno::ECONNREFUSED
     $log.warn "out_graphite: connection refused by #{@host}:#{@port}"
   end

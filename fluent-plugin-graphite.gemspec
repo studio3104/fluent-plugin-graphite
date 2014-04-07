@@ -19,5 +19,6 @@ Gem::Specification.new do |gem|
 
   gem.add_runtime_dependency 'fluentd', '~> 0.10.17'
   gem.add_runtime_dependency 'fluent-mixin-rewrite-tag-name'
+  gem.add_runtime_dependency 'graphite-api'
   gem.add_development_dependency 'rake'
 end
