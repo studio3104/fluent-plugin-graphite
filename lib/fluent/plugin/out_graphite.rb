@@ -67,11 +67,12 @@ class Fluent::GraphiteOutput < Fluent::Output
     return nil if filtered_record.empty?
 
     metrics = {}
+    tag = tag.sub(/\.$/, '') # may include a dot at the end of the emit_tag fluent-mixin-rewrite-tag-name returns. remove it.
     filtered_record.each do |k, v|
       key = case @tag_for
             when 'ignore' then k
-            when 'prefix' then tag + k
-            when 'suffix' then k + '.' + tag.sub(/\.$/, '') # include a dot at the end of the emit_tag fluent-mixin-rewrite-tag-name returns. remove it.
+            when 'prefix' then tag + '.' + k
+            when 'suffix' then k + '.' + tag
             end
 
       key = key.gsub(/(\s|\/)+/, '_') # cope with in the case of containing symbols or spaces in the key of the record like in_dstat.
