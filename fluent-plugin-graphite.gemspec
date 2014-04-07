@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.authors     = ['Satoshi SUZUKI']
   gem.email       = 'studio3104.com@gmail.com'
   gem.homepage    = 'https://github.com/studio3104/fluent-plugin-graphite'
-  gem.description = 'fluentd output plugin to send metricses to graphite'
+  gem.description = 'fluentd output plugin to send metrics to graphite'
   gem.summary     = gem.description
   gem.licenses    = ['MIT']
   gem.has_rdoc    = false
