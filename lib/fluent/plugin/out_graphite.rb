@@ -12,6 +12,11 @@ class Fluent::GraphiteOutput < Fluent::Output
   config_param :name_keys, :string, default: nil
   config_param :name_key_pattern, :string, default: nil
 
+  # Define `log` method for v0.10.42 or earlier
+  unless method_defined?(:log)
+    define_method(:log) { $log }
+  end
+
   def initialize
     super
     require 'graphite-api'
