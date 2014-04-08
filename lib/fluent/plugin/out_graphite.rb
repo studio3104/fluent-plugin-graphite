@@ -84,6 +84,6 @@ class Fluent::GraphiteOutput < Fluent::Output
   def post(metrics, time)
     @client.metrics(metrics, time)
   rescue Errno::ECONNREFUSED
-    $log.warn "out_graphite: connection refused by #{@host}:#{@port}"
+    log.warn "out_graphite: connection refused by #{@host}:#{@port}"
   end
 end
