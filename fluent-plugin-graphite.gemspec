@@ -3,7 +3,7 @@ $:.push File.expand_path('../lib', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.name        = 'fluent-plugin-graphite'
-  gem.version     = '0.0.2'
+  gem.version     = '0.0.3'
   gem.authors     = ['Satoshi SUZUKI']
   gem.email       = 'studio3104.com@gmail.com'
   gem.homepage    = 'https://github.com/studio3104/fluent-plugin-graphite'
