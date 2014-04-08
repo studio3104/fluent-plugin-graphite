@@ -129,8 +129,8 @@ message: `metrics { "f1":"100", "f2":"200", "f3":"300" }`
 - Specify field names of the input record. Separate by , (comma). The values of these fields are posted as numbers, and names of thease fields are used as parts of grame_names.
 
 ###### name_key_pattern
-- Specify the field names of the input record by a regular expression. The values of these fields are posted as numbers, and names of thease fields are used as parts of grame_names.
 - Either of `name_keys` or `name_key_pattern` is required.
+- Specify the field names of the input record by a regular expression. The values of these fields are posted as numbers, and names of thease fields are used as parts of grame_names.
 
 ###### remove_tag_prefix, remove_tag_suffix, add_tag_prefix, add_tag_suffix
 - Setting for rewriting the tag.
