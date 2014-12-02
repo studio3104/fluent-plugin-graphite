@@ -90,5 +90,7 @@ class Fluent::GraphiteOutput < Fluent::Output
     @client.metrics(metrics, time)
   rescue Errno::ECONNREFUSED
     log.warn "out_graphite: connection refused by #{@host}:#{@port}"
+  rescue SocketError => se
+    log.warn "out_graphite: socket error by #{@host}:#{@port} :#{se}"
   end
 end
