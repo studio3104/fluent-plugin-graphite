@@ -38,6 +38,7 @@ class GraphiteOutputTest < Test::Unit::TestCase
   ]
 
   def setup
+    Fluent::Test.setup
     @server = TCPServer.new(TCP_PORT)
   end
 
