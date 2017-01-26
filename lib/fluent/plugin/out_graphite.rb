@@ -47,6 +47,8 @@ class Fluent::GraphiteOutput < Fluent::Output
     if @name_key_pattern
       @name_key_pattern = Regexp.new(@name_key_pattern)
     end
+    # How many times to retry the call if timeout raised
+    @max_retries ||= 3
   end
 
   def emit(tag, es, chain)
@@ -87,18 +89,17 @@ class Fluent::GraphiteOutput < Fluent::Output
   end
 
   def post(metrics, time)
-    max_trials = 3
     trial ||= 1
     @client.metrics(metrics, time)
   rescue Errno::ETIMEDOUT
     # after long periods with nothing emitted, the connection will be closed and result in timeout
-    if trial <= max_trials
+    if trial <= @max_retries
       log.warn "out_graphite: connection timeout to #{@host}:#{@port}. Reconnecting... "
       trial += 1
       connect_client!
       retry
     else
-      log.error "out_graphite: ERROR: connection timeout to #{@host}:#{@port}. Exceeded max_trials #{max_trials}"
+      log.error "out_graphite: ERROR: connection timeout to #{@host}:#{@port}. Exceeded max_retries #{max_retries}"
     end
   rescue Errno::ECONNREFUSED
     log.warn "out_graphite: connection refused by #{@host}:#{@port}"

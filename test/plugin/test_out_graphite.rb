@@ -129,6 +129,3 @@ class GraphiteOutputTest < Test::Unit::TestCase
     assert_equal m1, { 'dstat.total_cpu_usage.usr.test' => 0.0, 'dstat.total_cpu_usage.sys.test' => 0.0, 'dstat.total_cpu_usage.idl.test' => 100.0 }
   end
 end
-
-
-
