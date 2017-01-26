@@ -87,12 +87,19 @@ class Fluent::GraphiteOutput < Fluent::Output
   end
 
   def post(metrics, time)
+    max_trials = 3
+    trial ||= 1
     @client.metrics(metrics, time)
   rescue Errno::ETIMEDOUT
     # after long periods with nothing emitted, the connection will be closed and result in timeout
-    log.warn "out_graphite: connection timeout to #{@host}:#{@port}. Reconnecting... "
-    connect_client!
-    retry
+    if trial <= max_trials
+      log.warn "out_graphite: connection timeout to #{@host}:#{@port}. Reconnecting... "
+      trial += 1
+      connect_client!
+      retry
+    else
+      log.error "out_graphite: ERROR: connection timeout to #{@host}:#{@port}. Exceeded max_trials #{max_trials}"
+    end
   rescue Errno::ECONNREFUSED
     log.warn "out_graphite: connection refused by #{@host}:#{@port}"
   rescue SocketError => se
