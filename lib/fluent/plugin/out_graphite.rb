@@ -99,7 +99,7 @@ class Fluent::GraphiteOutput < Fluent::Output
       connect_client!
       retry
     else
-      log.error "out_graphite: ERROR: connection timeout to #{@host}:#{@port}. Exceeded max_retries #{max_retries}"
+      log.error "out_graphite: ERROR: connection timeout to #{@host}:#{@port}. Exceeded max_retries #{@max_retries}"
     end
   rescue Errno::ECONNREFUSED
     log.warn "out_graphite: connection refused by #{@host}:#{@port}"
