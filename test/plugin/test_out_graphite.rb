@@ -83,7 +83,7 @@ class GraphiteOutputTest < Test::Unit::TestCase
     assert_raise(Fluent::ConfigError) { d = create_driver(CONFIG_SPECIFY_BOTH_NAME_KEYS_AND_NAME_KEY_PATTERN) }
   end
 
-  def test_format_metrics
+  def test_format_metrics_strings
     record = {
       'hostname' => 'localhost.localdomain',
       'dstat.total cpu usage.usr' => '0.0',
@@ -94,6 +94,24 @@ class GraphiteOutputTest < Test::Unit::TestCase
       'dstat.total cpu usage.siq' => '0.0'
     }
 
+    run_format_metrics_assertions(record)
+  end
+  
+  def test_format_metrics_symbols
+    record = {
+      :'hostname'                  => 'localhost.localdomain',
+      :'dstat.total cpu usage.usr' => '0.0',
+      :'dstat.total cpu usage.sys' => '0.0',
+      :'dstat.total cpu usage.idl' => '100.0',
+      :'dstat.total cpu usage.wai' => '0.0',
+      :'dstat.total cpu usage.hiq' => '0.0',
+      :'dstat.total cpu usage.siq' => '0.0'
+    }
+
+    run_format_metrics_assertions(record)
+  end
+  
+  def run_format_metrics_assertions(record)
     d = create_driver
     m1 = d.instance.format_metrics('test.', record)
     assert_equal m1, { 'test.dstat.total_cpu_usage.usr' => 0.0, 'test.dstat.total_cpu_usage.sys' => 0.0, 'test.dstat.total_cpu_usage.idl' => 100.0, 'test.dstat.total_cpu_usage.wai' => 0.0, 'test.dstat.total_cpu_usage.hiq' => 0.0, 'test.dstat.total_cpu_usage.siq' => 0.0 }
