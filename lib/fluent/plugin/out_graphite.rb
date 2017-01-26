@@ -24,7 +24,7 @@ class Fluent::GraphiteOutput < Fluent::Output
 
   def start
     super
-    @client = GraphiteAPI.new(graphite: "#{@host}:#{@port}")
+    connect_client!
   end
 
   def configure(conf)
@@ -64,9 +64,9 @@ class Fluent::GraphiteOutput < Fluent::Output
 
   def format_metrics(tag, record)
     filtered_record = if @name_keys
-                        record.select { |k,v| @name_keys.include?(k) }
+                        record.select { |k,v| @name_keys.include?(k.to_s) }
                       else # defined @name_key_pattern
-                        record.select { |k,v| @name_key_pattern.match(k) }
+                        record.select { |k,v| @name_key_pattern.match(k.to_s) }
                       end
 
     return nil if filtered_record.empty?
@@ -75,9 +75,9 @@ class Fluent::GraphiteOutput < Fluent::Output
     tag = tag.sub(/\.$/, '') # may include a dot at the end of the emit_tag fluent-mixin-rewrite-tag-name returns. remove it.
     filtered_record.each do |k, v|
       key = case @tag_for
-            when 'ignore' then k
-            when 'prefix' then tag + '.' + k
-            when 'suffix' then k + '.' + tag
+            when 'ignore' then k.to_s
+            when 'prefix' then "#{tag}.#{k}"
+            when 'suffix' then "#{k}.#{tag}"
             end
 
       key = key.gsub(/(\s|\/)+/, '_') # cope with in the case of containing symbols or spaces in the key of the record like in_dstat.
@@ -88,9 +88,20 @@ class Fluent::GraphiteOutput < Fluent::Output
 
   def post(metrics, time)
     @client.metrics(metrics, time)
+  rescue Errno::ETIMEDOUT
+    # after long periods with nothing emitted, the connection will be closed and result in timeout
+    log.warn "out_graphite: connection timeout to #{@host}:#{@port}. Reconnecting... "
+    connect_client!
+    retry
   rescue Errno::ECONNREFUSED
     log.warn "out_graphite: connection refused by #{@host}:#{@port}"
   rescue SocketError => se
     log.warn "out_graphite: socket error by #{@host}:#{@port} :#{se}"
+  rescue StandardError => e
+    log.error "out_graphite: ERROR: #{e}"
+  end
+  
+  def connect_client!
+    @client = GraphiteAPI.new(graphite: "#{@host}:#{@port}")
   end
 end
