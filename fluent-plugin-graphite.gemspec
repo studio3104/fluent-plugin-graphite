@@ -21,5 +21,5 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'fluent-mixin-rewrite-tag-name'
   gem.add_runtime_dependency 'graphite-api'
   gem.add_development_dependency 'rake'
-  gem.add_development_dependency "test-unit"
+  gem.add_development_dependency 'test-unit', '~> 3.2.0'
 end
