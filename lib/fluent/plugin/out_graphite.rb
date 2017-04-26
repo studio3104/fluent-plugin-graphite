@@ -49,6 +49,11 @@ class Fluent::GraphiteOutput < Fluent::BufferedOutput
     end
     # How many times to retry the call if timeout raised
     @max_retries ||= 3
+
+    if @flush_interval < 10
+      log.info("flush_interval less than 10s is not allowed and overwritten to 10s")
+      @flush_interval = 10
+    end
   end
 
   def format(tag, time, record)

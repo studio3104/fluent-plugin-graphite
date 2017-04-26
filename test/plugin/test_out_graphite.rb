@@ -36,6 +36,12 @@ class GraphiteOutputTest < Test::Unit::TestCase
     name_keys dstat.total cpu usage.usr,dstat.total cpu usage.sys,dstat.total cpu usage.idl
     name_key_pattern ^((?!hostname).)*$
   ]
+  CONFIG_NAME_KEY_PATTERN_FLUSH_INTERVAL_LESS_THAN_10_SECONDS = %[
+    host localhost
+    port #{TCP_PORT}
+    name_key_pattern ^((?!hostname).)*$
+    flush_interval 5s
+  ]
 
   def setup
     Fluent::Test.setup
@@ -82,6 +88,12 @@ class GraphiteOutputTest < Test::Unit::TestCase
 
     assert_raise(Fluent::ConfigError) { d = create_driver(CONFIG_INVALID_TAG_FOR) }
     assert_raise(Fluent::ConfigError) { d = create_driver(CONFIG_SPECIFY_BOTH_NAME_KEYS_AND_NAME_KEY_PATTERN) }
+  end
+
+  def test_configure_flush_interval_less_than_10s
+    d = create_driver(CONFIG_NAME_KEY_PATTERN_FLUSH_INTERVAL_LESS_THAN_10_SECONDS)
+    # should be overwritten with 10s which is minimum graphite metrics resolution
+    assert_equal d.instance.flush_interval, 10
   end
 
   def test_format_metrics_strings
