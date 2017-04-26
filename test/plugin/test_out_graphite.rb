@@ -57,6 +57,7 @@ class GraphiteOutputTest < Test::Unit::TestCase
     assert_equal d.instance.tag_for, 'prefix'
     assert_equal d.instance.name_keys, nil
     assert_equal d.instance.name_key_pattern, /^((?!hostname).)*$/
+    assert_equal d.instance.flush_interval, 60
 
     d = create_driver(CONFIG_NAME_KEYS)
     assert_equal d.instance.host, 'localhost'
