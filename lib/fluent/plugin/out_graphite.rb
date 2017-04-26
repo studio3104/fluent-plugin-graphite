@@ -1,6 +1,6 @@
 require 'fluent/mixin/rewrite_tag_name'
 
-class Fluent::GraphiteOutput < Fluent::Output
+class Fluent::GraphiteOutput < Fluent::BufferedOutput
   Fluent::Plugin.register_output('graphite', self)
 
   include Fluent::HandleTagNameMixin
