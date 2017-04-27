@@ -1,6 +1,6 @@
 require 'fluent/mixin/rewrite_tag_name'
 
-class Fluent::GraphiteOutput < Fluent::Output
+class Fluent::GraphiteOutput < Fluent::BufferedOutput
   Fluent::Plugin.register_output('graphite', self)
 
   include Fluent::HandleTagNameMixin
@@ -49,10 +49,19 @@ class Fluent::GraphiteOutput < Fluent::Output
     end
     # How many times to retry the call if timeout raised
     @max_retries ||= 3
+
+    if @flush_interval < 10
+      log.info("flush_interval less than 10s is not allowed and overwritten to 10s")
+      @flush_interval = 10
+    end
   end
 
-  def emit(tag, es, chain)
-    es.each do |time, record|
+  def format(tag, time, record)
+    [tag, time, record].to_msgpack
+  end
+
+  def write(chunk)
+    chunk.msgpack_each do |tag, time, record|
       emit_tag = tag.dup
       filter_record(emit_tag, time, record)
       next unless metrics = format_metrics(emit_tag, record)
@@ -60,8 +69,6 @@ class Fluent::GraphiteOutput < Fluent::Output
       # implemented to immediate call post method in this loop, because graphite-api.gem has the buffers.
       post(metrics, time)
     end
-
-    chain.next
   end
 
   def format_metrics(tag, record)

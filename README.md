@@ -136,6 +136,11 @@ message: `metrics { "f1":"100", "f2":"200", "f3":"300" }`
 - Setting for rewriting the tag.
 - For more information: https://github.com/y-ken/fluent-mixin-rewrite-tag-name
 
+##### buffer
+
+- Inherits from buffer parameters.
+  - Please refer to the article: http://docs.fluentd.org/v0.12/articles/buffer-plugin-overview
+
 ## Contributing
 
 1. Fork it ( http://github.com/studio3104/fluent-plugin-graphite/fork )
