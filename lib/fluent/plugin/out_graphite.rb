@@ -8,6 +8,7 @@ class Fluent::GraphiteOutput < Fluent::Output
 
   config_param :host, :string
   config_param :port, :integer, default: 2003
+  config_param :protocol, :string, default: 'udp'
   config_param :tag_for, :string, default: 'prefix'
   config_param :name_keys, :string, default: nil
   config_param :name_key_pattern, :string, default: nil
@@ -110,6 +111,6 @@ class Fluent::GraphiteOutput < Fluent::Output
   end
   
   def connect_client!
-    @client = GraphiteAPI.new(graphite: "#{@host}:#{@port}")
+    @client = GraphiteAPI.new(graphite: "#{@protocol}://#{@host}:#{@port}")
   end
 end
