@@ -2,37 +2,44 @@ require 'helper'
 
 class GraphiteOutputTest < Test::Unit::TestCase
   TCP_PORT = 42003
+  PROTOCOL = "tcp"
   CONFIG_NAME_KEY_PATTERN = %[
     host localhost
     port #{TCP_PORT}
+    protocol #{PROTOCOL}
     name_key_pattern ^((?!hostname).)*$
   ]
   CONFIG_NAME_KEYS = %[
     host localhost
     port #{TCP_PORT}
+    protocol #{PROTOCOL}
     name_keys dstat.total cpu usage.usr,dstat.total cpu usage.sys,dstat.total cpu usage.idl
   ]
   CONFIG_TAG_FOR_IGNORE = %[
     host localhost
     port #{TCP_PORT}
+    protocol #{PROTOCOL}
     name_keys dstat.total cpu usage.usr,dstat.total cpu usage.sys,dstat.total cpu usage.idl
     tag_for ignore
   ]
   CONFIG_TAG_FOR_SUFFIX = %[
     host localhost
     port #{TCP_PORT}
+    protocol #{PROTOCOL}
     name_keys dstat.total cpu usage.usr,dstat.total cpu usage.sys,dstat.total cpu usage.idl
     tag_for suffix
   ]
   CONFIG_INVALID_TAG_FOR = %[
     host localhost
     port #{TCP_PORT}
+    protocol #{PROTOCOL}
     name_key_pattern ^((?!hostname).)*$
     tag_for invalid
   ]
   CONFIG_SPECIFY_BOTH_NAME_KEYS_AND_NAME_KEY_PATTERN = %[
     host localhost
     port #{TCP_PORT}
+    protocol #{PROTOCOL}
     name_keys dstat.total cpu usage.usr,dstat.total cpu usage.sys,dstat.total cpu usage.idl
     name_key_pattern ^((?!hostname).)*$
   ]
@@ -54,6 +61,7 @@ class GraphiteOutputTest < Test::Unit::TestCase
     d = create_driver
     assert_equal d.instance.host, 'localhost'
     assert_equal d.instance.port, TCP_PORT
+    assert_equal d.instance.protocol, PROTOCOL
     assert_equal d.instance.tag_for, 'prefix'
     assert_equal d.instance.name_keys, nil
     assert_equal d.instance.name_key_pattern, /^((?!hostname).)*$/
@@ -61,6 +69,7 @@ class GraphiteOutputTest < Test::Unit::TestCase
     d = create_driver(CONFIG_NAME_KEYS)
     assert_equal d.instance.host, 'localhost'
     assert_equal d.instance.port, TCP_PORT
+    assert_equal d.instance.protocol, PROTOCOL
     assert_equal d.instance.tag_for, 'prefix'
     assert_equal d.instance.name_keys, ['dstat.total cpu usage.usr', 'dstat.total cpu usage.sys', 'dstat.total cpu usage.idl']
     assert_equal d.instance.name_key_pattern, nil
@@ -68,6 +77,7 @@ class GraphiteOutputTest < Test::Unit::TestCase
     d = create_driver(CONFIG_TAG_FOR_IGNORE)
     assert_equal d.instance.host, 'localhost'
     assert_equal d.instance.port, TCP_PORT
+    assert_equal d.instance.protocol, PROTOCOL
     assert_equal d.instance.tag_for, 'ignore'
     assert_equal d.instance.name_keys, ['dstat.total cpu usage.usr', 'dstat.total cpu usage.sys', 'dstat.total cpu usage.idl']
     assert_equal d.instance.name_key_pattern, nil
@@ -75,6 +85,7 @@ class GraphiteOutputTest < Test::Unit::TestCase
     d = create_driver(CONFIG_TAG_FOR_SUFFIX)
     assert_equal d.instance.host, 'localhost'
     assert_equal d.instance.port, TCP_PORT
+    assert_equal d.instance.protocol, PROTOCOL
     assert_equal d.instance.tag_for, 'suffix'
     assert_equal d.instance.name_keys, ['dstat.total cpu usage.usr', 'dstat.total cpu usage.sys', 'dstat.total cpu usage.idl']
     assert_equal d.instance.name_key_pattern, nil

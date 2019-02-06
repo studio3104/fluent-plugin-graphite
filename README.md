@@ -31,6 +31,7 @@ message: `metrics { "f1":"100", "f2":"200", "f3":"300" }`
     type graphite
     host localhost
     port 2003
+    protocol udp
     tag_for prefix
     name_keys f1,f3
   </match>
@@ -52,6 +53,7 @@ message: `metrics { "f1":"100", "f2":"200", "f3":"300" }`
     type graphite
     host localhost
     port 2003
+    protocol udp
     tag_for prefix
     name_key_pattern f\d
   </match>
@@ -74,6 +76,7 @@ message: `metrics { "f1":"100", "f2":"200", "f3":"300" }`
     type graphite
     host localhost
     port 2003
+    protocol udp
     tag_for suffix
     name_keys f1,f2
   </match>
@@ -95,6 +98,7 @@ message: `metrics { "f1":"100", "f2":"200", "f3":"300" }`
     type graphite
     host localhost
     port 2003
+    protocol udp
     tag_for ignore
     name_keys f1,f2
   </match>
@@ -116,6 +120,10 @@ message: `metrics { "f1":"100", "f2":"200", "f3":"300" }`
 ###### port
 - Default is `2003`.
 - listening port of carbon-cache.
+
+###### protocol
+- Default is `udp`
+- socket protocol such as `tcp`, `udp`.
 
 ###### tag_for
 - Default is `prefix`.
